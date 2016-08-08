@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using BIR1Service.Data;
 using Jerry1333.Utils;
 
@@ -97,6 +98,25 @@ namespace BIR1Service
         {
             return Config.TestServerRequests ? $"{Config.ServiceTestUrl}{type}" : $"{Config.ServiceUrl}{type}";
         }
+
+        public static string GetKluczUzytkownika()
+        {
+            try
+            {
+                string data;
+                using (var c = new WebClient())
+                {
+                    data = c.DownloadString("https://wyszukiwarkaregon.stat.gov.pl/appBIR/scripts/appbir.js");
+                }
+
+                var rx = new Regex(@"""pKluczUzytkownika"":""(.+)""");
+
+                return rx.Match(data).Groups[1].Value;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
