@@ -12,7 +12,9 @@ namespace BIR1Service
             try
             {
                 Config.TestServerRequests = testServer;
+
                 KluczUzytkownika = kluczUzytkownika.IsNullOrEmpty() ? Network.GetKluczUzytkownika() : kluczUzytkownika;
+
                 var verTest = Config.UtilsMinVersion.CompareTo(Utils.GetUtilsVersion());
                 if (verTest > 0) throw new DllNotFoundException("Wrong utils dll version! Min version is: " + Config.UtilsMinVersion);
             }
@@ -83,9 +85,7 @@ namespace BIR1Service
             try
             {
                 if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-
                 if (searchBy == SearchBy.Nip || searchBy == SearchBy.Krs || searchBy == SearchBy.Regon) throw new ArgumentException(nameof(searchBy));
-
                 if (param.Length == 0) throw new ArgumentNullException(nameof(param));
 
                 return Search(searchBy, param);
@@ -115,7 +115,6 @@ namespace BIR1Service
             try
             {
                 if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-
                 if (regon.IsNullOrEmpty()) throw new ArgumentNullException(nameof(regon));
                 if (silosId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(silosId));
 
@@ -134,7 +133,6 @@ namespace BIR1Service
             try
             {
                 if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-
                 if (regon.IsNullOrEmpty()) throw new ArgumentNullException(nameof(regon));
                 if (silosId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(silosId));
 

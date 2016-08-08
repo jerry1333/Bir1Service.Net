@@ -106,7 +106,7 @@ namespace BIR1Service
                 string data;
                 using (var c = new WebClient())
                 {
-                    data = c.DownloadString("https://wyszukiwarkaregon.stat.gov.pl/appBIR/scripts/appbir.js");
+                    data = c.DownloadString(Config.WebAppUrl);
                 }
 
                 var rx = new Regex(@"""pKluczUzytkownika"":""(.+)""");
