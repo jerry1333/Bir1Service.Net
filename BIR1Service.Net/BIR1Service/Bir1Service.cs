@@ -12,8 +12,8 @@ namespace BIR1Service
             try
             {
                 Config.TestServerRequests = testServer;
-                var verTest = Config.MinUtilsVersion.CompareTo(Utils.GetVersion(typeof(Utils)));
-                if (verTest > 0) throw new DllNotFoundException("Wrong utils dll version! Min version is: " + Config.MinUtilsVersion);
+                var verTest = Config.UtilsMinVersion.CompareTo(Utils.GetUtilsVersion());
+                if (verTest > 0) throw new DllNotFoundException("Wrong utils dll version! Min version is: " + Config.UtilsMinVersion);
             }
             catch (Exception)
             {
