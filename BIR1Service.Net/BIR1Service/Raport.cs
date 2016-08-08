@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using BIR1Service.Data;
-using BIR1Service.Templates;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BIR1Service
 {
@@ -14,41 +13,41 @@ namespace BIR1Service
         {
             try
             {
-                Dictionary<string, object> dict;
+                JObject json;
                 switch (type)
                 {
                     case Method.Zaloguj:
-                        dict = Jsons.LoginParams;
-                        dict["pKluczUzytkownika"] = param[0];
+                        json = JObject.Parse(Jsons.LoginParams);
+                        json["pKluczUzytkownika"] = param[0];
                         break;
                     case Method.Wyloguj:
-                        dict = Jsons.LogoutParams;
-                        dict["pIdentyfikatorSesji"] = param[0];
+                        json = JObject.Parse(Jsons.LogoutParams);
+                        json["pIdentyfikatorSesji"] = param[0];
                         break;
                     case Method.PobierzCaptcha:
-                        dict = Jsons.CaptchaGetParams;
+                        json = JObject.Parse(Jsons.CaptchaGetParams);
                         break;
                     case Method.SprawdzCaptcha:
-                        dict = Jsons.CaptchaCheckParams;
-                        dict["pCaptcha"] = param[0];
+                        json = JObject.Parse(Jsons.CaptchaCheckParams);
+                        json["pCaptcha"] = param[0];
                         break;
                     case Method.GetValue:
-                        dict = Jsons.GetValueParams;
-                        dict["pNazwaParametru"] = param[0];
+                        json = JObject.Parse(Jsons.GetValueParams);
+                        json["pNazwaParametru"] = param[0];
                         break;
                     case Method.DaneKomunikat:
-                        dict = Jsons.DaneKomunikatParams;
+                        json = JObject.Parse(Jsons.DaneKomunikatParams);
                         break;
                     case Method.DanePobierzPelnyRaport:
-                        dict = Jsons.DaneRaportParams;
-                        dict["pRegon"] = param[0];
-                        dict["pNazwaRaportu"] = param[1];
-                        dict["pSilosID"] = param[2];
+                        json = JObject.Parse(Jsons.DaneRaportParams);
+                        json["pRegon"] = param[0];
+                        json["pNazwaRaportu"] = param[1];
+                        json["pSilosID"] = param[2];
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(type));
                 }
-                return JsonConvert.SerializeObject(dict);
+                return JsonConvert.SerializeObject(json);
             }
             catch (Exception)
             {
@@ -60,23 +59,23 @@ namespace BIR1Service
         {
             try
             {
-                var dict = Jsons.DaneSzukajParams;
+                var json = JObject.Parse(Jsons.DaneSzukajParams);
                 var prepParam = new StringBuilder();
 
-                if (!((type == SearchBy.Regon || type == SearchBy.Nip || type == SearchBy.Krs) && (param[0].Length == 10 || param[0].Length == 9 || param[0].Length == 14))) return null;
                 if (type == SearchBy.Regony9zn || type == SearchBy.Rregony14zn || type == SearchBy.Krsy || type == SearchBy.Nipy)
                 {
                     foreach (var s in param)
                         prepParam.AppendFormat("{0},", s);
 
+                    prepParam = prepParam.Remove(prepParam.Length - 1, 1);
                     var regexp = new Regex(@"^([0-9]+)(,\s*[0-9]+)*$");
                     if (!regexp.IsMatch(prepParam.ToString())) return null;
                 }
                 else
                     prepParam.Append(param[0]);
 
-                ((Dictionary<string, string>) dict["pParametryWyszukiwania"])[type.ToString()] = prepParam.ToString();
-                var paramsString = JsonConvert.SerializeObject(dict);
+                json["pParametryWyszukiwania"][type.ToString()] = prepParam.ToString();
+                var paramsString = JsonConvert.SerializeObject(json);
 
                 return paramsString;
             }
