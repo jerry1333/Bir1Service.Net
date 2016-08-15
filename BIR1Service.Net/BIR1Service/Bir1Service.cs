@@ -1,5 +1,6 @@
 ﻿using System;
-using BIR1Service.Data;
+using System.Runtime.InteropServices;
+using BIR1Service.ServiceData;
 using Jerry1333.Utils;
 using Newtonsoft.Json;
 
@@ -7,16 +8,21 @@ namespace BIR1Service
 {
     public class Bir1Service
     {
+        public Datas Data;
+        private static Config _config;
+
         public Bir1Service(string kluczUzytkownika = null, bool testServer = false)
         {
             try
             {
+                _config = new Config();
+                Data = new Datas(ref _config);
+
                 Config.TestServerRequests = testServer;
+                _config.KluczUzytkownika = kluczUzytkownika.IsNullOrEmpty() ? Network.GetKluczUzytkownika() : kluczUzytkownika;
 
-                KluczUzytkownika = kluczUzytkownika.IsNullOrEmpty() ? Network.GetKluczUzytkownika() : kluczUzytkownika;
-
-                var verTest = Config.UtilsMinVersion.CompareTo(Utils.GetUtilsVersion());
-                if (verTest > 0) throw new DllNotFoundException("Wrong utils dll version! Min version is: " + Config.UtilsMinVersion);
+                if (_config.UtilsMinVersion.CompareTo(Utils.GetUtilsVersion()) > 0)
+                    throw new DllNotFoundException("Wrong utils dll version! Min version is: " + _config.UtilsMinVersion);
             }
             catch (Exception)
             {
@@ -24,20 +30,17 @@ namespace BIR1Service
             }
         }
 
-        private string Sid { get; set; }
-        private string KluczUzytkownika { get; }
-
         public bool Login()
         {
             try
             {
-                if (!Sid.IsNullOrEmpty()) throw new InvalidOperationException("Already logged in!");
+                if (!_config.Sid.IsNullOrEmpty()) throw new InvalidOperationException("SID already set! Use logout method.");
 
-                var response = Network.MakeRequest(Method.Zaloguj, KluczUzytkownika);
+                var response = Network.MakeRequest(Method.Zaloguj, _config.KluczUzytkownika);
                 dynamic dane = JsonConvert.DeserializeObject(response);
-                Sid = dane.d;
+                _config.Sid = dane.d;
 
-                return !Sid.IsNullOrEmpty() && Sid.Length == 20;
+                return !_config.Sid.IsNullOrEmpty() && _config.Sid.Length == 20;
             }
             catch (Exception)
             {
@@ -49,10 +52,11 @@ namespace BIR1Service
         {
             try
             {
-                if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
+                if (_config.Sid.IsNullOrEmpty()) throw new InvalidOperationException("No SID set! Use login method.");
 
-                var response = Network.MakeRequest(Method.Wyloguj, Sid);
+                var response = Network.MakeRequest(Method.Wyloguj, _config.Sid);
                 dynamic dane = JsonConvert.DeserializeObject(response);
+                if (dane.d) _config.Sid = null;
 
                 return dane.d;
             }
@@ -62,88 +66,6 @@ namespace BIR1Service
             }
         }
 
-        public string SearchBySingle(SearchBy searchBy, string param)
-        {
-            try
-            {
-                if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
 
-                if (searchBy == SearchBy.Nipy || searchBy == SearchBy.Krsy || searchBy == SearchBy.Regony9zn || searchBy == SearchBy.Rregony14zn) throw new ArgumentException(nameof(searchBy));
-
-                if (param.IsNullOrEmpty()) throw new ArgumentNullException(nameof(param));
-
-                return Search(searchBy, new[] {param});
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public string SearchByMulti(SearchBy searchBy, string[] param)
-        {
-            try
-            {
-                if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-                if (searchBy == SearchBy.Nip || searchBy == SearchBy.Krs || searchBy == SearchBy.Regon) throw new ArgumentException(nameof(searchBy));
-                if (param.Length == 0) throw new ArgumentNullException(nameof(param));
-
-                return Search(searchBy, param);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private string Search(SearchBy type, string[] param)
-        {
-            try
-            {
-                var response = Network.MakeRequest(type, param, Sid);
-                dynamic dane = JsonConvert.DeserializeObject(response);
-                return dane.d;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public string GetFullData(string regon, string silosId, RaportFiz type)
-        {
-            try
-            {
-                if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-                if (regon.IsNullOrEmpty()) throw new ArgumentNullException(nameof(regon));
-                if (silosId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(silosId));
-
-                var response = Network.MakeRequest(regon, silosId, type, Sid);
-                dynamic dane = JsonConvert.DeserializeObject(response);
-                return dane.d;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public string GetFullData(string regon, string silosId, RaportPraw type)
-        {
-            try
-            {
-                if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-                if (regon.IsNullOrEmpty()) throw new ArgumentNullException(nameof(regon));
-                if (silosId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(silosId));
-
-                var response = Network.MakeRequest(regon, silosId, type, Sid);
-                dynamic dane = JsonConvert.DeserializeObject(response);
-                return dane.d;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace BIR1Service.Data
+﻿namespace BIR1Service.ServiceData
 {
     internal static class Jsons
     {
