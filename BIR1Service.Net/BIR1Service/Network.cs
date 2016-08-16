@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using BIR1Service.Data;
-using Jerry1333.Libs;
+using Jerry1333.Utils;
 
 namespace BIR1Service
 {
@@ -58,7 +59,7 @@ namespace BIR1Service
             }
         }
 
-        public static string MakeRequest(string uri, string data, string sid = null)
+        private static string MakeRequest(string uri, string data, string sid = null)
         {
             try
             {
@@ -66,6 +67,7 @@ namespace BIR1Service
 
                 var req = (HttpWebRequest) WebRequest.Create(uri);
                 req.Method = "POST";
+                req.SendChunked = true;
                 req.ContentType = "application/json";
                 req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0";
                 req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
@@ -92,9 +94,29 @@ namespace BIR1Service
             }
         }
 
-        public static string GetMethodUri(Method type)
+        private static string GetMethodUri(Method type)
         {
-            return Config.TestServerRequests ? $"{Config.TestServerBaseUri}{type}" : $"{Config.ServerBaseUri}{type}";
+            return Config.TestServerRequests ? $"{Config.ServiceTestUrl}{type}" : $"{Config.ServiceUrl}{type}";
+        }
+
+        public static string GetKluczUzytkownika()
+        {
+            try
+            {
+                string data;
+                using (var c = new WebClient())
+                {
+                    data = c.DownloadString(Config.WebAppUrl);
+                }
+
+                var rx = new Regex(@"""pKluczUzytkownika"":""(.+)""");
+
+                return rx.Match(data).Groups[1].Value;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

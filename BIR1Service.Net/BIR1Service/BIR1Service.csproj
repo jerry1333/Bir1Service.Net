@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Jerry1333.Libs.Utils, Version=1.2.6037.39007, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jerry1333.Utils.1.2\lib\Jerry1333.Libs.Utils.dll</HintPath>
+    <Reference Include="Jerry1333.Utils, Version=1.3.1.33685, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Jerry1333.Utils.1.3.1\lib\Jerry1333.Utils.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -58,7 +58,7 @@
     <Compile Include="Network.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Raport.cs" />
-    <Compile Include="Templates\Jsons.cs" />
+    <Compile Include="Data\Jsons.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -67,6 +67,11 @@
   <PropertyGroup>
     <PostBuildEvent>rd "$(ProjectDir)obj" /S /Q</PostBuildEvent>
   </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="" />
+    </VisualStudio>
+  </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

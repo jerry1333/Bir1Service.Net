@@ -1,19 +1,22 @@
 ﻿using System;
 using BIR1Service.Data;
-using Jerry1333.Libs;
+using Jerry1333.Utils;
 using Newtonsoft.Json;
 
 namespace BIR1Service
 {
     public class Bir1Service
     {
-        public Bir1Service(bool testServer = false)
+        public Bir1Service(string kluczUzytkownika = null, bool testServer = false)
         {
             try
             {
                 Config.TestServerRequests = testServer;
-                var verTest = Config.MinUtilsVersion.CompareTo(Utils.GetVersion(typeof(Utils)));
-                if (verTest > 0) throw new DllNotFoundException("Wrong utils dll version! Min version is: " + Config.MinUtilsVersion);
+
+                KluczUzytkownika = kluczUzytkownika.IsNullOrEmpty() ? Network.GetKluczUzytkownika() : kluczUzytkownika;
+
+                var verTest = Config.UtilsMinVersion.CompareTo(Utils.GetUtilsVersion());
+                if (verTest > 0) throw new DllNotFoundException("Wrong utils dll version! Min version is: " + Config.UtilsMinVersion);
             }
             catch (Exception)
             {
@@ -21,17 +24,16 @@ namespace BIR1Service
             }
         }
 
-        public string Sid { get; set; }
+        private string Sid { get; set; }
+        private string KluczUzytkownika { get; }
 
-        public bool Login(string kluczUzytkownika = "aaaaaabbbbbcccccddd_")
+        public bool Login()
         {
             try
             {
                 if (!Sid.IsNullOrEmpty()) throw new InvalidOperationException("Already logged in!");
 
-                if (kluczUzytkownika.IsNullOrEmpty()) throw new ArgumentNullException(nameof(kluczUzytkownika));
-
-                var response = Network.MakeRequest(Method.Zaloguj, kluczUzytkownika);
+                var response = Network.MakeRequest(Method.Zaloguj, KluczUzytkownika);
                 dynamic dane = JsonConvert.DeserializeObject(response);
                 Sid = dane.d;
 
@@ -52,7 +54,7 @@ namespace BIR1Service
                 var response = Network.MakeRequest(Method.Wyloguj, Sid);
                 dynamic dane = JsonConvert.DeserializeObject(response);
 
-                return true;
+                return dane.d;
             }
             catch (Exception)
             {
@@ -83,9 +85,7 @@ namespace BIR1Service
             try
             {
                 if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-
                 if (searchBy == SearchBy.Nip || searchBy == SearchBy.Krs || searchBy == SearchBy.Regon) throw new ArgumentException(nameof(searchBy));
-
                 if (param.Length == 0) throw new ArgumentNullException(nameof(param));
 
                 return Search(searchBy, param);
@@ -115,7 +115,6 @@ namespace BIR1Service
             try
             {
                 if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-
                 if (regon.IsNullOrEmpty()) throw new ArgumentNullException(nameof(regon));
                 if (silosId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(silosId));
 
@@ -134,7 +133,6 @@ namespace BIR1Service
             try
             {
                 if (Sid.IsNullOrEmpty()) throw new InvalidOperationException("Not logged in!");
-
                 if (regon.IsNullOrEmpty()) throw new ArgumentNullException(nameof(regon));
                 if (silosId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(silosId));
 
