@@ -2,12 +2,12 @@
 {
     public enum SearchBy
     {
-        Nip,
-        Regon,
-        Krs,
-        Nipy,
-        Regony9zn,
-        Rregony14zn,
-        Krsy
+        Nip = 1,
+        Regon = 2,
+        Krs = 4,
+        Nipy = 8,
+        Regony9zn = 16,
+        Rregony14zn = 32,
+        Krsy = 64
     }
 }

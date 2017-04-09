@@ -77,16 +77,20 @@ namespace BIR1Service
                 if (!sid.IsNullOrEmpty())
                     req.Headers.Add("sid", sid);
 
-                var os = new StreamWriter(req.GetRequestStream());
-                os.Write(data);
-                os.Flush();
-                os.Close();
-                var resp = (HttpWebResponse) req.GetResponse();
-                var respStream = resp.GetResponseStream();
-                if (respStream == null) return null;
+                using (var os = new StreamWriter(req.GetRequestStream()))
+                {
+                    os.Write(data);
+                    os.Flush();
+                    var resp = (HttpWebResponse) req.GetResponse();
+                    if (resp.StatusCode != HttpStatusCode.OK) return null;
+                    using (var respStream = resp.GetResponseStream())
+                    {
+                        if (respStream == null) return null;
 
-                var sr = new StreamReader(respStream);
-                return sr.ReadToEnd();
+                        var sr = new StreamReader(respStream);
+                        return sr.ReadToEnd();
+                    }
+                }
             }
             catch (Exception)
             {
@@ -98,20 +102,14 @@ namespace BIR1Service
         {
             return Config.TestServerRequests ? $"{Config.ServiceTestUrl}{type}" : $"{Config.ServiceUrl}{type}";
         }
-
+        
         public static string GetKluczUzytkownika()
         {
             try
             {
-                string data;
-                using (var c = new WebClient())
-                {
-                    data = c.DownloadString(Config.WebAppUrl);
-                }
-
-                var rx = new Regex(@"""pKluczUzytkownika"":""(.+)""");
-
-                return rx.Match(data).Groups[1].Value;
+                //var rx = new Regex("[a-f0-9?|]{20}");
+                //return rx.Match(data).Groups[1].Value;
+                throw new NotImplementedException();
             }
             catch (Exception)
             {

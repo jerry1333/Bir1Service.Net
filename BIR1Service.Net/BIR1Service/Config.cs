@@ -11,5 +11,6 @@ namespace BIR1Service
         internal static bool TestServerRequests { get; set; }
         internal string Sid { get; set; }
         internal string KluczUzytkownika { get; set; }
+        internal string DefaultKluczUzytkownika { get; } = @"aaaa?bbbbbccccccdd|?";
     }
 }

@@ -2,9 +2,9 @@
 {
     public enum RaportPraw
     {
-        DaneRaportPrawnaPubl,
-        DaneRaportDzialalnosciPrawnejPubl,
-        DaneRaportLokalnePrawnejPubl,
-        DaneRaportWspolnicyPrawnejPubl
+        DaneRaportPrawnaPubl = 1,
+        DaneRaportDzialalnosciPrawnejPubl = 2,
+        DaneRaportLokalnePrawnejPubl = 4,
+        DaneRaportWspolnicyPrawnejPubl = 8
     }
 }

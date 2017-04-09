@@ -2,11 +2,11 @@
 {
     public enum ServiceStatus
     {
-        StanDanych,
-        KomunikatKod,
-        KomunikatTresc,
-        StatusSesji,
-        StatusUslugi,
-        KomunikatUslugi
+        StanDanych = 1,
+        KomunikatKod = 2,
+        KomunikatTresc = 4,
+        StatusSesji = 8,
+        StatusUslugi = 16,
+        KomunikatUslugi = 32
     }
 }

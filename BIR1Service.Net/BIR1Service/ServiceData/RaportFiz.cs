@@ -2,8 +2,8 @@
 {
     public enum RaportFiz
     {
-        DaneRaportFizycznaPubl,
-        DaneRaportDzialalnosciFizycznejPubl,
-        DaneRaportLokalneFizycznejPubl
+        DaneRaportFizycznaPubl = 1,
+        DaneRaportDzialalnosciFizycznejPubl = 2,
+        DaneRaportLokalneFizycznejPubl = 4
     }
 }

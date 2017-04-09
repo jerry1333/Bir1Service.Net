@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 using BIR1Service.ServiceData;
 using Jerry1333.Utils;
 using Newtonsoft.Json;
 
 namespace BIR1Service
 {
-    public class Datas
+    public class Search
     {
         private readonly Config _config;
 
-        public Datas(ref Config conf)
+        public Search(ref Config conf)
         {
             _config = conf;
         }
@@ -29,7 +24,7 @@ namespace BIR1Service
 
                 if (param.IsNullOrEmpty()) throw new ArgumentNullException(nameof(param));
 
-                return Search(searchBy, new[] { param });
+                return _search(searchBy, new[] { param });
             }
             catch (Exception)
             {
@@ -45,7 +40,7 @@ namespace BIR1Service
                 if (searchBy == SearchBy.Nip || searchBy == SearchBy.Krs || searchBy == SearchBy.Regon) throw new ArgumentException(nameof(searchBy));
                 if (param.Length == 0) throw new ArgumentNullException(nameof(param));
 
-                return Search(searchBy, param);
+                return _search(searchBy, param);
             }
             catch (Exception)
             {
@@ -53,7 +48,7 @@ namespace BIR1Service
             }
         }
 
-        private string Search(SearchBy type, string[] param)
+        private string _search(SearchBy type, string[] param)
         {
             try
             {

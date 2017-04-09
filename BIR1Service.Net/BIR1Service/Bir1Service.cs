@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using BIR1Service.ServiceData;
 using Jerry1333.Utils;
 using Newtonsoft.Json;
@@ -8,18 +7,18 @@ namespace BIR1Service
 {
     public class Bir1Service
     {
-        public Datas Data;
+        public Search search;
         private static Config _config;
-
+        
         public Bir1Service(string kluczUzytkownika = null, bool testServer = false)
         {
             try
             {
                 _config = new Config();
-                Data = new Datas(ref _config);
+                search = new Search(ref _config);
 
                 Config.TestServerRequests = testServer;
-                _config.KluczUzytkownika = kluczUzytkownika.IsNullOrEmpty() ? Network.GetKluczUzytkownika() : kluczUzytkownika;
+                _config.KluczUzytkownika = kluczUzytkownika.IsNullOrEmpty() ? _config.DefaultKluczUzytkownika : kluczUzytkownika;
 
                 if (_config.UtilsMinVersion.CompareTo(Utils.GetUtilsVersion()) > 0)
                     throw new DllNotFoundException("Wrong utils dll version! Min version is: " + _config.UtilsMinVersion);
@@ -36,7 +35,7 @@ namespace BIR1Service
             {
                 if (!_config.Sid.IsNullOrEmpty()) throw new InvalidOperationException("SID already set! Use logout method.");
 
-                var response = Network.MakeRequest(Method.Zaloguj, _config.KluczUzytkownika);
+                var response = Network.MakeRequest(Method.Zaloguj, _config.DefaultKluczUzytkownika);
                 dynamic dane = JsonConvert.DeserializeObject(response);
                 _config.Sid = dane.d;
 

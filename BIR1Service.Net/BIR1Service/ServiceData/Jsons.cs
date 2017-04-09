@@ -2,7 +2,7 @@
 {
     internal static class Jsons
     {
-        public const string LoginParams = "{'pKluczUzytkownika': 'aaaaهbbbbbccccccdd|ه'}";
+        public const string LoginParams = "{'pKluczUzytkownika': ''}";
 
         public const string LogoutParams = "{'pIdentyfikatorSesji': ''}";
 

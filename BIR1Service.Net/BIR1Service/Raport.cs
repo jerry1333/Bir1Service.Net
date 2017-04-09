@@ -45,7 +45,7 @@ namespace BIR1Service
                         json["pSilosID"] = param[2];
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(type));
+                        throw new ArgumentOutOfRangeException(nameof(type),type,null);
                 }
                 return JsonConvert.SerializeObject(json);
             }
